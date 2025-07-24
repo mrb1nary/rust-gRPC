@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package indexer;
+
+service SolanaIndexer {
+
+  rpc GetSlotInfo (SlotRequest) returns (SlotResponse);
+  rpc GetTransactionInfo(TransactionRequest) returns (TransactionResponse);
+  rpc GetAccountInfo(AccountRequest) returns (AccountResponse);
+   rpc GetProgramAccounts(ProgramAccountsRequest) returns (ProgramAccountsResponse);
+
+}
+
+//GetSlotInfo 
+message SlotRequest {
+  uint64 slot = 1;
+}
+
+message SlotResponse {
+  uint64 slot = 1;
+  string blockhash = 2;
+  string previous_blockhash = 3;
+}
+
+
+//GetTransactionInfo
+message TransactionRequest {
+  string signature = 1;
+}
+
+message TransactionResponse {
+  string signature = 1;
+  string block_time = 2;
+  string slot = 3;
+  repeated string logs = 4;
+}
+
+//GetAccountInfo
+message AccountRequest {
+  string pubkey = 1;
+}
+
+message AccountResponse {
+  string lamports = 1;
+  string owner = 2;
+  bool executable = 3;
+  uint64 rent_epoch = 4;
+  string data = 5;
+}
+
+
+//GetProgramAccounts
+message ProgramAccountsRequest {
+  string program_id = 1;
+}
+
+message AccountInfo {
+  string pubkey = 1;
+  string lamports = 2;
+  string owner = 3;
+  bool executable = 4;
+  string rent_epoch = 5;
+  string data = 6;
+}
+
+message ProgramAccountsResponse {
+  repeated AccountInfo accounts = 1;
+}
+
+
