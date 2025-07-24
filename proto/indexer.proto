@@ -4,10 +4,14 @@ package indexer;
 
 service SolanaIndexer {
 
+  //Unary 
   rpc GetSlotInfo (SlotRequest) returns (SlotResponse);
   rpc GetTransactionInfo(TransactionRequest) returns (TransactionResponse);
   rpc GetAccountInfo(AccountRequest) returns (AccountResponse);
-   rpc GetProgramAccounts(ProgramAccountsRequest) returns (ProgramAccountsResponse);
+  rpc GetProgramAccounts(ProgramAccountsRequest) returns (ProgramAccountsResponse);
+
+  //
+  rpc StreamSlotInfo(StreamSlotRequest) returns (stream SlotResponse);
 
 }
 
@@ -68,3 +72,8 @@ message ProgramAccountsResponse {
 }
 
 
+
+
+message StreamSlotRequest {
+  uint64 interval_ms = 1; // Polling time
+}

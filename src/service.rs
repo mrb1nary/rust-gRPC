@@ -1,8 +1,10 @@
 use crate::indexer::solana_indexer_server::SolanaIndexer;
 use crate::indexer::{
-    AccountRequest, AccountResponse, ProgramAccountsRequest, ProgramAccountsResponse, SlotRequest, SlotResponse, TransactionRequest, TransactionResponse
+    AccountRequest, AccountResponse, ProgramAccountsRequest, ProgramAccountsResponse, SlotRequest, SlotResponse, StreamSlotRequest, TransactionRequest, TransactionResponse
 };
-use crate::methods::{get_account_info, get_program_accounts, get_slot_info_handler, get_transaction_info};
+use crate::methods::{
+    get_account_info, get_program_accounts, get_slot_info_handler, get_transaction_info, stream_slot_info,
+};
 use std::env;
 use tonic::{Request, Response, Status};
 
@@ -19,6 +21,8 @@ impl IndexerService {
 
 #[tonic::async_trait]
 impl SolanaIndexer for IndexerService {
+    type StreamSlotInfoStream = crate::methods::SlotStream;
+
     //----------------------------------------------------------------//
     async fn get_slot_info(
         &self,
@@ -79,5 +83,12 @@ impl SolanaIndexer for IndexerService {
         let accounts = get_program_accounts(&self.rpc_url, program_id).await?;
 
         Ok(Response::new(ProgramAccountsResponse { accounts }))
+    }
+
+    async fn stream_slot_info(
+        &self,
+        request: Request<StreamSlotRequest>,
+    ) -> Result<Response<Self::StreamSlotInfoStream>, Status> {
+        stream_slot_info(self.rpc_url.clone(), request).await
     }
 }
